@@ -1,10 +1,5 @@
 // nav-main.ts
-import {
-  IconHome2,
-  IconUser,
-  IconLink,
-  IconAppWindow,
-} from "@tabler/icons-react";
+import { IconHome2, IconAppWindow } from "@tabler/icons-react";
 
 export const data = {
   user: {
@@ -20,10 +15,10 @@ export const data = {
     },
 
     {
-      title: "Notas",
-      url: "/dashboard/note",
+      title: "Users",
+      url: "/dashboard/user",
       icon: IconAppWindow,
-    },/*
+    } /*
     {
       title: "Links",
       url: "/dashboard/links",
@@ -33,7 +28,7 @@ export const data = {
       title: "Users",
       url: "/dashboard/users",
       icon: IconUser,
-    } /*
+    } 
     {
       title: "Projects",
       url: "#",
@@ -44,6 +39,7 @@ export const data = {
       url: "#",
       icon: IconUsers,
     },*/,
+    ,
   ] /*
   navClouds: [
     {

@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { CardHeader } from "@/components/ui/card";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -18,7 +17,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <CardHeader> {children}</CardHeader>
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );

@@ -1,0 +1,10 @@
+Como migrar de pnpm para npm
+1. 🧹 Apagar arquivos e pastas criados pelo pnpm
+Execute no terminal:
+
+rm -rf node_modules pnpm-lock.yaml
+
+2. 🔧 Reinstalar as dependências com npm
+Rode:
+
+npm install
