@@ -11,16 +11,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteUser } from "@/app/api/user/route";
+import { deleteNote } from "@/app/api/note/route";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-interface DeleteUserButtonProps {
-  userId: string;
+interface DeleteNoteButtonProps {
+  noteId: string;
 }
 
-export default function DeleteUserButton({ userId }: DeleteUserButtonProps) {
+export default function DeleteNoteButton({ noteId }: DeleteNoteButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -28,13 +28,13 @@ export default function DeleteUserButton({ userId }: DeleteUserButtonProps) {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await deleteUser(userId);
-      toast.success("User deleted successfully");
+      await deleteNote(noteId);
+      toast.success("Note deleted successfully");
       setIsOpen(false);
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to delete user");
+      toast.error("Failed to delete note");
     } finally {
       setIsLoading(false);
     }

@@ -8,22 +8,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { UserPlus } from "lucide-react";
-import UserForm from "./user-form";
+import NoteForm from "./note-form";
 
-export default async function UserDialog() {
+export default async function NoteDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild className="justify-start">
         <Button>
-          Add User <UserPlus className="size-4" />
+          Add Note <UserPlus className="size-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
-          <DialogDescription>Add a new user to the database.</DialogDescription>
+          <DialogTitle>Add Note</DialogTitle>
+          <DialogDescription>Add a new note to the database.</DialogDescription>
 
-          <UserForm />
+          <NoteForm />
         </DialogHeader>
       </DialogContent>
     </Dialog>

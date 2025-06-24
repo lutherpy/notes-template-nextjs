@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  email: z.string().email(),
+  title: z.string().min(2).max(50),
+  content: z.string().min(2).max(100),
 });
 
 import { Button } from "@/components/ui/button";
@@ -21,25 +21,25 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createUser, updateUser } from "@/app/api/user/route";
+import { createNote, updateNote } from "@/app/api/note/route";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { User } from "@/db/schema";
+import { Note } from "@/db/schema";
 
-interface UserFormProps {
-  user?: User;
+interface NoteFormProps {
+  note?: Note;
 }
 
-export default function UserForm({ user }: UserFormProps) {
+export default function NoteForm({ note }: NoteFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: user?.username || "",
-      email: user?.email || "",
+      title: note?.title || "",
+      content: note?.content || "",
     },
   });
 
@@ -47,28 +47,28 @@ export default function UserForm({ user }: UserFormProps) {
     setIsLoading(true);
 
     try {
-      const userData = {
+      const noteData = {
         ...values,
-        password: "password123",
       };
 
-      if (user) {
-        await updateUser({
-          ...userData,
-          id: user.id,
+      if (note) {
+        await updateNote({
+          ...noteData,
+          id: note.id,
+          userId: note.userId,
         });
       } else {
-        await createUser(userData);
+        await createNote(noteData);
       }
 
       form.reset();
 
-      toast.success(`User ${user ? "updated" : "added"} successfully`);
+      toast.success(`Note ${note ? "updated" : "added"} successfully`);
       router.refresh();
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error(`Failed to ${user ? "update" : "add"} user`);
+      toast.error(`Failed to ${note ? "update" : "add"} note`);
     } finally {
       setIsLoading(false);
     }
@@ -79,12 +79,12 @@ export default function UserForm({ user }: UserFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Bruce Wayne" {...field} />
+                <Input placeholder="Install NextJS" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,12 +93,12 @@ export default function UserForm({ user }: UserFormProps) {
 
         <FormField
           control={form.control}
-          name="email"
+          name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Content</FormLabel>
               <FormControl>
-                <Input placeholder="bruce@wayne.com" {...field} />
+                <Input placeholder="Note Content" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,7 +109,7 @@ export default function UserForm({ user }: UserFormProps) {
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            `${user ? "Update" : "Add"} User`
+            `${note ? "Update" : "Add"} Note`
           )}
         </Button>
       </form>

@@ -15,8 +15,13 @@ export const data = {
     },
 
     {
-      title: "Users",
-      url: "/dashboard/user",
+      title: "Notes",
+      url: "/dashboard/note",
+      icon: IconAppWindow,
+    },
+     {
+      title: "Teste",
+      url: "/dashboard/teste",
       icon: IconAppWindow,
     } /*
     {

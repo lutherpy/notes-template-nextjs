@@ -1,4 +1,4 @@
-import { getUsers } from "@/app/api/user/route";
+import { getNotes } from "@/app/api/note/route";
 
 import {
   Table,
@@ -16,31 +16,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import DeleteUserButton from "./delete-user-button";
-import UserForm from "./forms/user/user-form";
+import DeleteNoteButton from "@/components/delete-note-button";
+import NoteForm from "@/components/forms/note/note-form";
 
-export default async function UsersTable() {
-  const users = await getUsers();
+export default async function NotesTable() {
+  const notes = await getNotes();
 
   return (
     <Table>
-      <TableCaption>A list users.</TableCaption>
+      <TableCaption>A list notes.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Email</TableHead>
-          <TableHead>Username</TableHead>
+          <TableHead className="w-[100px]">Title</TableHead>
+          <TableHead>Notename</TableHead>
           <TableHead>Created At</TableHead>
+          <TableHead>User ID</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className="font-medium">{user.email}</TableCell>
-            <TableCell>{user.username}</TableCell>
-            <TableCell>{user.createdAt?.toLocaleString()}</TableCell>
+        {notes.map((note) => (
+          <TableRow key={note.id}>
+            <TableCell className="font-medium">{note.title}</TableCell>
+            <TableCell>{note.content}</TableCell>
+            <TableCell>{note.createdAt?.toLocaleString()}</TableCell>
+           <TableCell>{note.userId}</TableCell>
             <TableCell className="text-right">
               <Dialog>
                 <DialogTrigger asChild>
@@ -51,13 +53,13 @@ export default async function UsersTable() {
 
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Edit User</DialogTitle>
-                    <UserForm user={user} />
+                    <DialogTitle>Edit Note</DialogTitle>
+                    <NoteForm note={note} />
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
 
-              <DeleteUserButton userId={user.id} />
+              <DeleteNoteButton noteId={note.id} />
             </TableCell>
           </TableRow>
         ))}
