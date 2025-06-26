@@ -19,7 +19,7 @@ export const data = {
       url: "/dashboard/note",
       icon: IconAppWindow,
     },
-     {
+    {
       title: "Teste",
       url: "/dashboard/teste",
       icon: IconAppWindow,

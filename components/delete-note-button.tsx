@@ -45,6 +45,7 @@ export default function DeleteNoteButton({ noteId }: DeleteNoteButtonProps) {
       <DialogTrigger asChild>
         <Button variant="ghost">
           <Trash2 className="size-4" />
+          Delete
         </Button>
       </DialogTrigger>
 
