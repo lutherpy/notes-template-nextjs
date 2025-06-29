@@ -1,18 +1,12 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
 import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -33,12 +27,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [isLoading, setLoading] = useState(false);
   const [isLoadingSocial, setIsLoadingSocial] = useState(false);
+
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,6 +48,13 @@ export function LoginForm({
       password: "",
     },
   });
+
+  // Desativa o spinner social só quando já está na dashboard
+  useEffect(() => {
+    if (isLoadingSocial && pathname === "/dashboard") {
+      setIsLoadingSocial(false);
+    }
+  }, [pathname, isLoadingSocial]);
 
   async function handleSignInWithMicrosoft() {
     try {
@@ -57,14 +65,13 @@ export function LoginForm({
       });
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoadingSocial(false);
+      toast.error("Erro ao fazer login com Microsoft");
+      setIsLoadingSocial(false); // Desativa apenas se erro
     }
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-
     try {
       await authClient.signIn.email({
         email: values.email,
@@ -73,13 +80,11 @@ export function LoginForm({
       });
 
       toast.success("Login successful!");
-      // O redirect acontece automaticamente via callbackURL
-      // router.push("/dashboard"); // ❌ Desnecessário se callbackURL está definido
+      // Não precisa router.push, pois o callbackURL já redireciona
     } catch (error) {
       console.error("Login failed:", error);
       toast.error("Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Desativa apenas se falhar
     }
   }
 
@@ -131,48 +136,42 @@ export function LoginForm({
                   </span>
                 </div>
                 <div className="grid gap-6">
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input placeholder="m@example.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <div className="flex flex-col gap-2">
-                      <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="********"
-                                {...field}
-                                type="password"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Link
-                        href="/forgot-password"
-                        className="ml-auto text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="m@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="********"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <Loader2 className="size-4 animate-spin" />
