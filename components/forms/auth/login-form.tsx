@@ -28,8 +28,14 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z
+    .string()
+    .email("E-mail inválido")
+    .refine((email) => !email.endsWith("@cmc.ao"), {
+      message:
+        "Este e-mail pertence à CMC. Faça login clicando em 'Login with Microsoft' acima.",
+    }),
+  password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres."),
 });
 
 export function LoginForm({
