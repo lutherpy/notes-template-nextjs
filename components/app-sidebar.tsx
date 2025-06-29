@@ -20,7 +20,6 @@ import { authClient } from "@/lib/auth-client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = authClient.useSession();
-  console.log("Dados da sessão completa:", session);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z
@@ -44,7 +45,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [isLoading, setLoading] = useState(false);
   const [isLoadingSocial, setIsLoadingSocial] = useState(false);
-
+  const router = useRouter();
   const pathname = usePathname();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,21 +78,34 @@ export function LoginForm({
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    try {
-      await authClient.signIn.email({
-        email: values.email,
-        password: values.password,
-        callbackURL: "/dashboard",
-      });
+    const { email, password } = values;
 
-      toast.success("Login successful!");
-      // Não precisa router.push, pois o callbackURL já redireciona
-    } catch (error) {
-      console.error("Login failed:", error);
-      toast.error("Login failed. Please check your credentials.");
-      setLoading(false); // Desativa apenas se falhar
+    const { error } = await authClient.signIn.email(
+      {
+        email,
+        password,
+        callbackURL: "/dashboard",
+        rememberMe: true,
+      },
+      {
+        onRequest: () => setLoading(true),
+        onSuccess: () => {
+          toast.success("Login realizado com sucesso!");
+          router.push("/dashboard");
+          return; // ✅ Sai após sucesso
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message || "Erro ao fazer login.");
+        },
+      }
+    );
+
+    // Caso ainda haja erro após os callbacks
+    if (error) {
+      toast.error(error.message || "Erro ao fazer login.");
     }
+
+    setLoading(false);
   }
 
   return (
