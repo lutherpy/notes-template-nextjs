@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // ✅ Troquei para Inter
+import { Oxanium } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ActiveThemeProvider } from "@/components/active-theme";
@@ -7,8 +7,9 @@ import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Carrega a fonte Oxanium
+const oxanium = Oxanium({
+  variable: "--font-oxanium",
   subsets: ["latin"],
   display: "swap",
 });
@@ -28,11 +29,10 @@ export default async function RootLayout({
   const isScaled = activeThemeValue?.endsWith("-scaled");
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={oxanium.variable}>
       <body
         className={cn(
-          inter.variable, // ✅ Aqui aplica a fonte Inter como CSS variable
-          "bg-background overscroll-none font-sans antialiased",
+          "bg-background overscroll-none font-[var(--font-oxanium)] antialiased",
           activeThemeValue ? `theme-${activeThemeValue}` : "",
           isScaled ? "theme-scaled" : ""
         )}
