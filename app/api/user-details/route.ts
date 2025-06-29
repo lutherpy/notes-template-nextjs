@@ -60,7 +60,6 @@ export async function GET(req: NextRequest) {
       .select()
       .from(userDetails)
       .where(eq(userDetails.userId, userId));
-    console.log("use details:######", result);
 
     const hasDetails = result.length > 0;
 

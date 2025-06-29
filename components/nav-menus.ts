@@ -1,5 +1,10 @@
 // nav-main.ts
-import { IconHome2, IconAppWindow, IconBusFilled } from "@tabler/icons-react";
+import {
+  IconHome2,
+  IconUser,
+  IconBuilding,
+  IconNote,
+} from "@tabler/icons-react";
 
 export const data = {
   user: {
@@ -17,12 +22,17 @@ export const data = {
     {
       title: "Notes",
       url: "/dashboard/note",
-      icon: IconAppWindow,
+      icon: IconNote,
     },
     {
       title: "Departamentos",
       url: "/dashboard/department",
-      icon: IconBusFilled,
+      icon: IconBuilding,
+    },
+    {
+      title: "Users",
+      url: "/dashboard/user",
+      icon: IconUser,
     } /*
     {
       title: "Links",
