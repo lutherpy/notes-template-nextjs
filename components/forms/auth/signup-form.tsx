@@ -1,48 +1,55 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 
-export function LoginForm({
+import { signUp } from "@/services/auth/user";
+
+import { z } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
+
+const formSchema = z.object({
+  username: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(3),
+});
+
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSocial, setIsLoadingSocial] = useState(false);
 
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
     },
@@ -63,24 +70,24 @@ export function LoginForm({
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
+    setIsLoading(true);
 
-    try {
-      await authClient.signIn.email({
-        email: values.email,
-        password: values.password,
-        callbackURL: "/dashboard",
-      });
+    const { success, message } = await signUp(
+      values.email,
+      values.password,
+      values.username
+    );
 
-      toast.success("Login successful!");
-      // O redirect acontece automaticamente via callbackURL
-      // router.push("/dashboard"); // ❌ Desnecessário se callbackURL está definido
-    } catch (error) {
-      console.error("Login failed:", error);
-      toast.error("Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+    if (success) {
+      toast.success(
+        `${message as string} Please check your email for verification.`
+      );
+      router.push("/dashboard");
+    } else {
+      toast.error(message as string);
     }
+
+    setIsLoading(false);
   }
 
   return (
@@ -88,7 +95,7 @@ export function LoginForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Login with your Microsoft account</CardDescription>
+          <CardDescription>Signup with your Microsoft account</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -134,6 +141,20 @@ export function LoginForm({
                   <div className="grid gap-3">
                     <FormField
                       control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="shadcn" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
@@ -177,14 +198,14 @@ export function LoginForm({
                     {isLoading ? (
                       <Loader2 className="size-4 animate-spin" />
                     ) : (
-                      "Login"
+                      "Signup"
                     )}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <Link href="/signup" className="underline underline-offset-4">
-                    Sign up
+                  Already have an account?{" "}
+                  <Link href="/" className="underline underline-offset-4">
+                    Login
                   </Link>
                 </div>
               </div>
