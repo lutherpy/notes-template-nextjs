@@ -1,4 +1,4 @@
-import { getNotes } from "@/server/actions/note/actions";
+import { getDepartments } from "@/server/actions/department/actions";
 
 import {
   Table,
@@ -18,32 +18,32 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import DeleteNoteButton from "@/components/delete-button/note/delete-note-button";
-import NoteForm from "@/components/forms/note/note-form";
-import { Note } from "@/db/schema";
+import DeleteDepartmentButton from "@/components/delete-button/department/delete-department-button";
+import DepartmentForm from "@/components/forms/department/department-form";
+import { Department } from "@/db/schema";
 
-export default async function NotesTable() {
-  const notes = await getNotes();
+export default async function DepartmentTable() {
+  const departments = await getDepartments();
 
   return (
     <Table>
-      <TableCaption>A list notes.</TableCaption>
+      <TableCaption>A list departments.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Title</TableHead>
-          <TableHead>Notename</TableHead>
+          <TableHead>Departmentname</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>User ID</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {notes.map((note: Note) => (
-          <TableRow key={note.id}>
-            <TableCell className="font-medium">{note.title}</TableCell>
-            <TableCell>{note.content}</TableCell>
-            <TableCell>{note.createdAt?.toLocaleString()}</TableCell>
-            <TableCell>{note.userId}</TableCell>
+        {departments.map((department: Department) => (
+          <TableRow key={department.id}>
+            <TableCell className="font-medium">{department.name}</TableCell>
+            <TableCell>{department.description}</TableCell>
+            <TableCell>{department.createdAt?.toLocaleString()}</TableCell>
+
             <TableCell className="text-right">
               <Dialog>
                 <DialogTrigger asChild>
@@ -54,13 +54,13 @@ export default async function NotesTable() {
 
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Edit Note</DialogTitle>
-                    <NoteForm note={note} />
+                    <DialogTitle>Edit Department</DialogTitle>
+                    <DepartmentForm department={department} />
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
 
-              <DeleteNoteButton noteId={note.id} />
+              <DeleteDepartmentButton departmentId={department.id} />
             </TableCell>
           </TableRow>
         ))}

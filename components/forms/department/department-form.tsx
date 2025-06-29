@@ -1,12 +1,15 @@
 "use client";
 
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+
+const formSchema = z.object({
+  name: z.string().min(2).max(50),
+  description: z.string().min(2).max(100),
+});
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,28 +21,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Note } from "@/db/schema";
+import {
+  createDepartment,
+  updateDepartment,
+} from "@/server/actions/department/actions";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Department } from "@/db/schema";
 
-import { createNote, updateNote } from "@/server/actions/note/actions"; // ✅
-
-const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  content: z.string().min(2).max(100),
-});
-
-interface NoteFormProps {
-  note?: Note;
+interface DepartmentFormProps {
+  department?: Department;
 }
 
-export default function NoteForm({ note }: NoteFormProps) {
+export default function DepartmentForm({ department }: DepartmentFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: note?.title || "",
-      content: note?.content || "",
+      name: department?.name || "",
+      description: department?.description || "",
     },
   });
 
@@ -47,18 +50,30 @@ export default function NoteForm({ note }: NoteFormProps) {
     setIsLoading(true);
 
     try {
-      if (note) {
-        await updateNote({ ...values, id: note.id, userId: note.userId });
+      const departmentData = {
+        ...values,
+      };
+
+      if (department) {
+        await updateDepartment({
+          ...departmentData,
+          id: department.id,
+        });
       } else {
-        await createNote(values);
+        await createDepartment(departmentData);
+        console.log(departmentData);
       }
 
       form.reset();
-      toast.success(`Note ${note ? "updated" : "added"} successfully`);
+
+      toast.success(
+        `Department ${department ? "updated" : "added"} successfully`
+      );
       router.refresh();
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error(`Failed to ${note ? "update" : "add"} note`);
+      toast.error(`Failed to ${department ? "update" : "add"} department`);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +84,7 @@ export default function NoteForm({ note }: NoteFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="title"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Title</FormLabel>
@@ -83,12 +98,12 @@ export default function NoteForm({ note }: NoteFormProps) {
 
         <FormField
           control={form.control}
-          name="content"
+          name="description"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <Input placeholder="Note Content" {...field} />
+                <Input placeholder="Department Content" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,7 +114,7 @@ export default function NoteForm({ note }: NoteFormProps) {
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            `${note ? "Update" : "Add"} Note`
+            `${department ? "Update" : "Add"} Department`
           )}
         </Button>
       </form>

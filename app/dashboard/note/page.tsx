@@ -1,10 +1,11 @@
 import NoteDialog from "@/components/forms/note/note-form-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "@/components/tables/note/columns";
-import { getNotes } from "@/app/api/note/route";
+import { getNotes } from "@/server/actions/note/actions"; // ✅ Importação correta
 
 export default async function Home() {
-  const notes = await getNotes();
+  const notes = await getNotes(); // ✅ Sem fetch()
+
   return (
     <main className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Notes</h1>

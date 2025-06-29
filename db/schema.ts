@@ -1,5 +1,17 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+export const department = pgTable("department", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
 // Tabela User
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -81,3 +93,4 @@ export const note = pgTable("note", {
 });
 
 export type Note = typeof note.$inferSelect;
+export type Department = typeof department.$inferSelect;

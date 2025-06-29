@@ -1,59 +1,95 @@
-"use server";
-
 import { db } from "@/db/drizzle";
-import { Note, note } from "@/db/schema";
+import { note } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function getNotes() {
-    try {
-        const allNotes = await db.select().from(note);
-        return allNotes;
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+// GET /api/note
+export async function GET() {
+  try {
+    const allNotes = await db.select().from(note);
+    return NextResponse.json(allNotes);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Erro ao buscar notas" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function createNote(noteData: { title: string; content: string }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
+// POST /api/note
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
     const userId = session?.user.id;
 
     if (!userId) {
-        throw new Error("Unauthorized: No user session found.");
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    try {
-        await db.insert(note).values({
-            ...noteData,
-            userId,
-        });
-    } catch (error) {
-        console.error(error);
-        return { error: "Failed to create note" };
-    }
+    const { title, content } = await req.json();
+
+    await db.insert(note).values({
+      title,
+      content,
+      userId,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Erro ao criar nota" }, { status: 500 });
+  }
 }
 
+// PUT /api/note
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, title, content, userId } = body;
 
-
-export async function updateNote(noteData: Omit<Note, "createdAt" | "updatedAt">) {
-    try {
-        await db.update(note).set(noteData).where(eq(note.id, noteData.id));
-    } catch (error) {
-        console.error(error);
-        return { error: "Failed to update note" };
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da nota é obrigatório" },
+        { status: 400 }
+      );
     }
+
+    await db
+      .update(note)
+      .set({ title, content, userId })
+      .where(eq(note.id, id));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar nota" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function deleteNote(id: string) {
-    try {
-        await db.delete(note).where(eq(note.id, id));
-    } catch (error) {
-        console.error(error);
-        return { error: "Failed to delete note" };
+// DELETE /api/note
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da nota é obrigatório" },
+        { status: 400 }
+      );
     }
+
+    await db.delete(note).where(eq(note.id, id));
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Erro ao deletar nota" },
+      { status: 500 }
+    );
+  }
 }

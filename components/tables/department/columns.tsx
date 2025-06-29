@@ -18,38 +18,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import DeleteNoteButton from "@/components/delete-button/note/delete-note-button";
-import NoteForm from "@/components/forms/note/note-form";
-import { Note } from "@/db/schema";
+import DeleteDepartmentButton from "@/components/delete-button/department/delete-department-button";
+import DepartmentForm from "@/components/forms/department/department-form";
+import { Department } from "@/db/schema";
 
-export const columns: ColumnDef<Note>[] = [
+export const columns: ColumnDef<Department>[] = [
   {
-    accessorKey: "title",
-    header: "Title",
+    accessorKey: "name",
+    header: "Name",
   },
   {
-    accessorKey: "content",
-    header: "Content",
-  },
-
-  {
-    accessorKey: "userId",
-    header: "User ID",
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => {
-      const value = row.original.createdAt;
-      return value ? new Date(value).toLocaleString() : "—";
-    },
+    accessorKey: "description",
+    header: "Description",
   },
 
   {
     id: "actions",
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => {
-      const note = row.original;
+      const department = row.original;
 
       return (
         <div className="flex justify-end">
@@ -70,15 +57,15 @@ export const columns: ColumnDef<Note>[] = [
                   </DialogTrigger>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <DeleteNoteButton noteId={note.id} />
+                  <DeleteDepartmentButton departmentId={department.id} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Edit Note</DialogTitle>
-                <NoteForm note={note} />
+                <DialogTitle>Edit Department</DialogTitle>
+                <DepartmentForm department={department} />
               </DialogHeader>
             </DialogContent>
           </Dialog>

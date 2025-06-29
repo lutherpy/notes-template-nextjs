@@ -2,7 +2,7 @@
 
 import { Loader2, Trash2 } from "lucide-react";
 
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,16 +11,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteNote } from "@/app/api/note/route";
+import { deleteDepartment } from "@/server/actions/department/actions"; // Adjust the import path as necessary
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-interface DeleteNoteButtonProps {
-  noteId: string;
+interface DeleteDepartmentButtonProps {
+  departmentId: string;
 }
 
-export default function DeleteNoteButton({ noteId }: DeleteNoteButtonProps) {
+export default function DeleteDepartmentButton({
+  departmentId,
+}: DeleteDepartmentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -28,13 +30,13 @@ export default function DeleteNoteButton({ noteId }: DeleteNoteButtonProps) {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await deleteNote(noteId);
-      toast.success("Note deleted successfully");
+      await deleteDepartment(departmentId);
+      toast.success("Department deleted successfully");
       setIsOpen(false);
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to delete note");
+      toast.error("Failed to delete department");
     } finally {
       setIsLoading(false);
     }

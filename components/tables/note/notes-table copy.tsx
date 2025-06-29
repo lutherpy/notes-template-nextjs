@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import DeleteNoteButton from "@/components/delete-note-button";
+import DeleteNoteButton from "@/components/delete-button/note/delete-note-button";
 import NoteForm from "@/components/forms/note/note-form";
 
 export default async function NotesTable() {
@@ -42,7 +42,7 @@ export default async function NotesTable() {
             <TableCell className="font-medium">{note.title}</TableCell>
             <TableCell>{note.content}</TableCell>
             <TableCell>{note.createdAt?.toLocaleString()}</TableCell>
-           <TableCell>{note.userId}</TableCell>
+            <TableCell>{note.userId}</TableCell>
             <TableCell className="text-right">
               <Dialog>
                 <DialogTrigger asChild>
