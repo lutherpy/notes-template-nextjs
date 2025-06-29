@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UserPlus } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import DepartmentForm from "./department-form";
 
 export default async function DepartmentDialog() {
@@ -15,7 +15,7 @@ export default async function DepartmentDialog() {
     <Dialog>
       <DialogTrigger asChild className="justify-start">
         <Button>
-          Add Department <UserPlus className="size-4" />
+          Add Department <PlusCircle className="size-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>

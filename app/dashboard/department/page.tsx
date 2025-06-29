@@ -9,7 +9,7 @@ export default async function Department() {
     <main className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Departments</h1>
 
-      <div className="flex justify-end">
+      <div className="flex justify-start">
         <DepartmentDialog />
       </div>
       <DataTable columns={columns} data={departments} />

@@ -7,15 +7,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UserPlus } from "lucide-react";
+import { PlusCircleIcon } from "lucide-react";
 import NoteForm from "./note-form";
 
 export default async function NoteDialog() {
   return (
     <Dialog>
-      <DialogTrigger asChild className="justify-start">
+      <DialogTrigger asChild className="justify-end">
         <Button>
-          Add Note <UserPlus className="size-4" />
+          Add Note <PlusCircleIcon className="size-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>
