@@ -30,7 +30,13 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z
+    .string()
+    .email("E-mail inválido")
+    .refine((email) => !email.endsWith("@cmc.ao"), {
+      message:
+        "Este e-mail é gerido pela Microsoft. Altere a senha na sua conta Microsoft.",
+    }),
 });
 
 export function ForgotPasswordForm({
