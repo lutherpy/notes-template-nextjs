@@ -1,7 +1,7 @@
 import DepartmentDialog from "@/components/forms/department/department-form-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "@/components/tables/department/columns";
-import { getDepartments } from "@/server/actions/department/actions";
+import { getDepartments } from "@/services/department";
 
 export default async function Department() {
   const departments = await getDepartments();

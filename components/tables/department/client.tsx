@@ -1,4 +1,4 @@
-import { getDepartments } from "@/server/actions/department/actions";
+import { getDepartments } from "@/services/department";
 
 import {
   Table,

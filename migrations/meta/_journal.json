@@ -8,6 +8,13 @@
       "when": 1751074943975,
       "tag": "0000_careless_kang",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751184899539,
+      "tag": "0001_--userdetails",
+      "breakpoints": true
     }
   ]
 }

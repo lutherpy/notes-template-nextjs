@@ -1,7 +1,7 @@
 import NoteDialog from "@/components/forms/note/note-form-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "@/components/tables/note/columns";
-import { getNotes } from "@/server/actions/note/actions"; // ✅ Importação correta
+import { getNotes } from "@/services/note"; // ✅ Importação correta
 
 export default async function Home() {
   const notes = await getNotes(); // ✅ Sem fetch()

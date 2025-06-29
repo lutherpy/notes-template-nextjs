@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Note } from "@/db/schema";
 
-import { createNote, updateNote } from "@/server/actions/note/actions"; // ✅
+import { createNote, updateNote } from "@/services/note"; // ✅
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),

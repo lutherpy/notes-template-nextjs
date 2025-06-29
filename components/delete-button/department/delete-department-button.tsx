@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteDepartment } from "@/server/actions/department/actions"; // Adjust the import path as necessary
+import { deleteDepartment } from "@/services/department"; // Adjust the import path as necessary
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

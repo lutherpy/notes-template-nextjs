@@ -21,10 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  createDepartment,
-  updateDepartment,
-} from "@/server/actions/department/actions";
+import { createDepartment, updateDepartment } from "@/services/department";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

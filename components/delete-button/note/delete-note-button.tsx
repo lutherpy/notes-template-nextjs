@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { deleteNote } from "@/server/actions/note/actions"; // Certifique-se que o caminho está correto
+import { deleteNote } from "@/services/note"; // Certifique-se que o caminho está correto
 
 interface DeleteNoteButtonProps {
   noteId: string;

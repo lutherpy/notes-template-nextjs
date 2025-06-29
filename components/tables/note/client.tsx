@@ -1,4 +1,4 @@
-import { getNotes } from "@/server/actions/note/actions";
+import { getNotes } from "@/services/note";
 
 import {
   Table,

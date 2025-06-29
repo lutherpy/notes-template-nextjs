@@ -1,5 +1,16 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+// Tabela de detalhes do usuário
+export const userDetails = pgTable("user_details", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  address: text("address").notNull(),
+  identificationNumber: text("identification_number").notNull(),
+  country: text("country").notNull(),
+  province: text("province").notNull(),
+});
+
 export const department = pgTable("department", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
