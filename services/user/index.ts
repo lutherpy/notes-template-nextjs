@@ -9,7 +9,6 @@ export async function getUsers() {
     method: "GET",
     cache: "no-store",
   });
-  console.log("getUsers:######", res);
 
   if (!res.ok) {
     throw new Error("Erro ao buscar usuários");
