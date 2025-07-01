@@ -9,13 +9,14 @@ type UserDetailsPayload = {
   identificationNumber: string;
   country: string;
   province: string;
+  departmentId: string; // ✅ incluído
 };
 
 export async function createUserDetails(details: UserDetailsPayload) {
   const res = await fetch(`${BASE_URL}/api/user-details`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(details),
+    body: JSON.stringify(details), // ✅ já inclui o departmentId
   });
 
   if (!res.ok) {

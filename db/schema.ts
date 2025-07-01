@@ -1,5 +1,7 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+
+
 // Tabela de detalhes do usuário
 export const userDetails = pgTable("user_details", {
   userId: text("user_id")
@@ -9,7 +11,10 @@ export const userDetails = pgTable("user_details", {
   identificationNumber: text("identification_number").notNull(),
   country: text("country").notNull(),
   province: text("province").notNull(),
+  departmentId: uuid("department_id")
+    .references(() => department.id, { onDelete: "set null" }), // ou "cascade"
 });
+
 
 export const department = pgTable("department", {
   id: uuid("id").primaryKey().defaultRandom(),

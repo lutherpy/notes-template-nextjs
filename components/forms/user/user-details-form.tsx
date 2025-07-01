@@ -13,26 +13,32 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { createUserDetails } from "@/services/user-details"; // ajuste o caminho conforme necessário
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createUserDetails } from "@/services/user-details";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDepartments } from "@/hooks/useDepartments"; // ✅ Hook customizado
 
-// ✅ Schema de validação
+// Schema de validação
 const formSchema = z.object({
   address: z.string().min(5, "Informe a morada completa"),
   identificationNumber: z.string().min(5, "Número inválido"),
   country: z.string().min(2, "Informe o país"),
   province: z.string().min(2, "Informe a província"),
+  departmentId: z.string().uuid("Selecione um departamento válido"),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export function UserDetailsForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const router = useRouter();
-
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,26 +46,22 @@ export function UserDetailsForm() {
       identificationNumber: "",
       country: "",
       province: "",
+      departmentId: "",
     },
   });
 
-  const onSubmit = async (values: FormData) => {
-    if (isSubmitting) return; // Evita submissões duplicadas
+  const isSubmitting = form.formState.isSubmitting;
 
+  // ✅ Usa o hook customizado
+  const { departments, loading } = useDepartments();
+
+  const onSubmit = async (values: FormData) => {
     try {
-      setIsSubmitting(true);
       await createUserDetails(values);
-      console.log("Detalhes do usuário salvos:", values);
       toast.success("Detalhes salvos com sucesso!");
-      router.push("/dashboard"); // redireciona após salvar
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message || "Erro ao salvar detalhes.");
-      } else {
-        toast.error("Erro ao salvar detalhes.");
-      }
-    } finally {
-      setIsSubmitting(false); // Garante reabilitação do botão
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error?.message || "Erro ao salvar detalhes.");
     }
   };
 
@@ -69,6 +71,7 @@ export function UserDetailsForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 max-w-md mx-auto"
       >
+        {/* Morada */}
         <FormField
           control={form.control}
           name="address"
@@ -83,6 +86,7 @@ export function UserDetailsForm() {
           )}
         />
 
+        {/* Identificação */}
         <FormField
           control={form.control}
           name="identificationNumber"
@@ -97,6 +101,7 @@ export function UserDetailsForm() {
           )}
         />
 
+        {/* País */}
         <FormField
           control={form.control}
           name="country"
@@ -111,6 +116,7 @@ export function UserDetailsForm() {
           )}
         />
 
+        {/* Província */}
         <FormField
           control={form.control}
           name="province"
@@ -125,7 +131,41 @@ export function UserDetailsForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {/* Departamento */}
+        <FormField
+  control={form.control}
+  name="departmentId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Departamento</FormLabel>
+      <FormControl>
+        {loading ? (
+          <Skeleton className="h-10 w-full rounded-md" />
+        ) : (
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            disabled={isSubmitting}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecione um departamento" />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>
+                  {dept.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+        <Button type="submit" className="w-full" disabled={isSubmitting || loading}>
           {isSubmitting ? "Salvando..." : "Salvar Detalhes"}
         </Button>
       </form>

@@ -13,8 +13,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const { address, identificationNumber, country, province } =
-      await req.json();
+    const {
+      address,
+      identificationNumber,
+      country,
+      province,
+      departmentId, // ✅ novo campo
+    } = await req.json();
+
+    // Validação básica (opcional, mas recomendado)
+    if (!departmentId) {
+      return NextResponse.json(
+        { error: "Departamento é obrigatório" },
+        { status: 400 }
+      );
+    }
 
     // Verifica se já existe um registro de user_details
     const existing = await db
@@ -35,6 +48,7 @@ export async function POST(req: NextRequest) {
       identificationNumber,
       country,
       province,
+      departmentId, // ✅ incluído na inserção
     });
 
     return NextResponse.json({ success: true });
