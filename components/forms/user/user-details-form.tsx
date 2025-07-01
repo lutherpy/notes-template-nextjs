@@ -60,9 +60,13 @@ export function UserDetailsForm() {
       await createUserDetails(values);
       toast.success("Detalhes salvos com sucesso!");
       router.push("/dashboard");
-    } catch (error: any) {
-      toast.error(error?.message || "Erro ao salvar detalhes.");
-    }
+   } catch (error: unknown) {
+  if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("Erro ao salvar detalhes.");
+  }
+}
   };
 
   return (
