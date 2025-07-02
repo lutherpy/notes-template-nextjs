@@ -7,7 +7,7 @@ if (!BASE_URL) {
 export async function getNotes() {
   const res = await fetch(`${BASE_URL}/api/note`, {
     method: "GET",
-    cache: "no-store",
+    cache: "default"
   });
 
   if (!res.ok) {

@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +11,7 @@ import {
 import { PlusCircleIcon } from "lucide-react";
 import NoteForm from "./note-form";
 
-export default async function NoteDialog() {
+export default function NoteDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild className="justify-end">

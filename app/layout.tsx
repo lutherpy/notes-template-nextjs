@@ -7,6 +7,8 @@ import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Suspense } from "react";
+import Loading from "@/components/loading/loading";
 
 // Carrega a fonte Oxanium
 const oxanium = Oxanium({
@@ -47,7 +49,7 @@ export default async function RootLayout({
         >
           <ActiveThemeProvider initialTheme={activeThemeValue}>
             <Toaster position="top-center" />
-            {children}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
             <SpeedInsights />
           </ActiveThemeProvider>
         </ThemeProvider>
