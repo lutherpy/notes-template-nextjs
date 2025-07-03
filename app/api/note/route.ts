@@ -45,10 +45,6 @@ export async function GET(req: NextRequest) {
 
     //return NextResponse.json(allNotes);
 
-    console.log("termo", search);
-    console.log("notes", notes);
-    console.log("page", page);
-
     return NextResponse.json({
       data: notes,
       total: total,

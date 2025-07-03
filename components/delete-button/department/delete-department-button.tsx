@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { mutate } from "swr";
 import { Loader2, Trash2 } from "lucide-react";
 
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,32 +15,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteDepartment } from "@/services/department"; // Adjust the import path as necessary
-import { useState } from "react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
+import { deleteDepartment } from "@/services/department";
 
 interface DeleteDepartmentButtonProps {
   departmentId: string;
+  endpoint?: string; // ✅ Para SWR mutate seletiva
 }
 
 export default function DeleteDepartmentButton({
   departmentId,
+  endpoint = "/api/department",
 }: DeleteDepartmentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       await deleteDepartment(departmentId);
-      toast.success("Department deleted successfully");
+      toast.success("Departamento eliminado com sucesso.");
+
+      // ✅ Atualiza cache do SWR com base no endpoint
+      await mutate(
+        (key) => typeof key === "string" && key.startsWith(endpoint),
+        undefined,
+        { revalidate: true }
+      );
+
       setIsOpen(false);
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to delete department");
+      toast.error("Erro ao eliminar departamento.");
     } finally {
       setIsLoading(false);
     }
@@ -46,17 +58,17 @@ export default function DeleteDepartmentButton({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost">
-          <Trash2 className="size-4" />
-          Delete
+          <Trash2 className="size-4 mr-1" />
+          Eliminar
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Tem certeza absoluta?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Esta ação não pode ser desfeita. O departamento será permanentemente
+            removido do sistema.
           </DialogDescription>
 
           <Button
@@ -64,7 +76,11 @@ export default function DeleteDepartmentButton({
             variant="destructive"
             onClick={handleDelete}
           >
-            {isLoading ? <Loader2 className="size-4 animate-spin" /> : "Delete"}
+            {isLoading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              "Eliminar"
+            )}
           </Button>
         </DialogHeader>
       </DialogContent>
