@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { mutate } from "swr";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,18 +21,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Note } from "@/db/schema";
 
-import { createNote, updateNote } from "@/services/note"; // ✅
+import { createNote, updateNote } from "@/services/note";
 
+// ✅ Esquema de validação
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  content: z.string().min(2).max(100),
+  title: z.string().min(2, "Mínimo 2 caracteres").max(50),
+  content: z.string().min(2, "Mínimo 2 caracteres").max(100),
 });
 
 interface NoteFormProps {
   note?: Note;
+  endpoint?: string; // Adicionado para saber qual mutate usar
 }
 
-export default function NoteForm({ note }: NoteFormProps) {
+export default function NoteForm({
+  note,
+  endpoint = "/api/note",
+}: NoteFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,12 +59,19 @@ export default function NoteForm({ note }: NoteFormProps) {
         await createNote(values);
       }
 
+      // ✅ Força revalidação do SWR com prefixo
+      await mutate(
+        (key) => typeof key === "string" && key.startsWith(endpoint),
+        undefined,
+        { revalidate: true }
+      );
+
       form.reset();
-      toast.success(`Note ${note ? "updated" : "added"} successfully`);
+      toast.success(`Nota ${note ? "actualizada" : "adicionada"} com sucesso`);
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error(`Failed to ${note ? "update" : "add"} note`);
+      toast.error(`Falha ao ${note ? "actualizar" : "adicionar"} nota`);
     } finally {
       setIsLoading(false);
     }
@@ -72,9 +85,9 @@ export default function NoteForm({ note }: NoteFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Título</FormLabel>
               <FormControl>
-                <Input placeholder="Install NextJS" {...field} />
+                <Input placeholder="Ex: Instalar NextJS" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,9 +99,9 @@ export default function NoteForm({ note }: NoteFormProps) {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content</FormLabel>
+              <FormLabel>Conteúdo</FormLabel>
               <FormControl>
-                <Input placeholder="Note Content" {...field} />
+                <Input placeholder="Ex: Usar create-next-app" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,7 +112,7 @@ export default function NoteForm({ note }: NoteFormProps) {
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            `${note ? "Update" : "Add"} Note`
+            `${note ? "Actualizar" : "Adicionar"} Nota`
           )}
         </Button>
       </form>

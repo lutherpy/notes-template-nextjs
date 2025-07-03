@@ -70,7 +70,7 @@ export const columns: ColumnDef<Note>[] = [
                   </DialogTrigger>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <DeleteNoteButton noteId={note.id} />
+                  <DeleteNoteButton noteId={note.id} endpoint="/api/note" />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

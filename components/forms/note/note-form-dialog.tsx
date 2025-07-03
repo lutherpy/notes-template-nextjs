@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,8 +23,7 @@ export default function NoteDialog() {
         <DialogHeader>
           <DialogTitle>Add Note</DialogTitle>
           <DialogDescription>Add a new note to the database.</DialogDescription>
-
-          <NoteForm />
+          return <NoteForm />;
         </DialogHeader>
       </DialogContent>
     </Dialog>
