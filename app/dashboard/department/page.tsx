@@ -1,18 +1,17 @@
-import DepartmentDialog from "@/components/forms/department/department-form-dialog";
-import { DataTable } from "@/components/ui/data-table";
-import { columns } from "@/components/tables/department/columns";
-import { getDepartments } from "@/services/department";
+"use client";
 
-export default async function Department() {
-  const departments = await getDepartments();
+import { columns } from "@/components/tables/department/columns";
+import { DataTableServer } from "@/components/data-table-server";
+import DepartmentDialog from "@/components/forms/department/department-form-dialog";
+
+export default function Home() {
   return (
     <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Departments</h1>
-
+      <h1 className="text-2xl font-bold">Notas</h1>
       <div className="flex justify-start">
         <DepartmentDialog />
       </div>
-      <DataTable columns={columns} data={departments} />
+      <DataTableServer endpoint="/api/department" columns={columns} />
     </main>
   );
 }

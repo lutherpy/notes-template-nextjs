@@ -10,7 +10,7 @@ import {
 import { PlusCircle } from "lucide-react";
 import DepartmentForm from "./department-form";
 
-export default async function DepartmentDialog() {
+export default function DepartmentDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild className="justify-start">

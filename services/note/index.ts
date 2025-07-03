@@ -1,3 +1,4 @@
+import { mutate } from "swr";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 if (!BASE_URL) {
@@ -17,7 +18,12 @@ export async function getNotes() {
   return res.json();
 }
 
-export async function createNote(note: { title: string; content: string }) {
+
+
+export async function createNote(
+  note: { title: string; content: string },
+  swrKeyToRefresh: string
+) {
   const res = await fetch(`${BASE_URL}/api/note`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -28,8 +34,14 @@ export async function createNote(note: { title: string; content: string }) {
     throw new Error("Erro ao criar nota");
   }
 
-  return res.json();
+  const result = await res.json();
+
+  // Atualiza o cache da lista com base na chave usada no useSWR
+  await mutate(swrKeyToRefresh);
+
+  return result;
 }
+
 
 export async function updateNote(note: {
   id: string;

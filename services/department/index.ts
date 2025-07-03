@@ -8,7 +8,7 @@ if (!BASE_URL) {
 export async function getDepartments() {
   const res = await fetch(`${BASE_URL}/api/department`, {
     method: "GET",
-    cache: "force-cache", // Use "force-cache" para evitar revalidação desnecessária
+    cache: "default", // Use "force-cache" para evitar revalidação desnecessária
   });
 
   if (!res.ok) {

@@ -15,6 +15,13 @@
       "when": 1751184899539,
       "tag": "0001_--userdetails",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751467088895,
+      "tag": "0002_-lp",
+      "breakpoints": true
     }
   ]
 }

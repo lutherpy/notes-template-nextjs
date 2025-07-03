@@ -1,26 +1,21 @@
 // hooks/useDepartments.ts
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { getDepartments } from "@/services/department";
-import { toast } from "sonner";
 
 export function useDepartments() {
-  const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useSWR("/api/department", getDepartments, {
+    refreshInterval: 5000,
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await getDepartments();
-        setDepartments(data);
-      } catch {
-        toast.error("Erro ao carregar departamentos");
-      } finally {
-        setLoading(false);
-      }
-    }
+  const departments = Array.isArray(data)
+    ? data // caso API retorne um array direto
+    : Array.isArray(data?.data)
+    ? data.data // caso API retorne { data: [...] }
+    : []; // fallback seguro
 
-    fetchData();
-  }, []);
-
-  return { departments, loading };
+  return {
+    departments,
+    isLoading,
+    isError: error,
+  };
 }
