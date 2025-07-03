@@ -1,27 +1,28 @@
 import { db } from "@/db/drizzle";
 import { note } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { desc, asc, eq, ilike, like } from "drizzle-orm";
+import { desc, asc, eq, ilike } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/note
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   const search = searchParams.get("search")?.trim() || "";
-  const orderBy = searchParams.get("orderBy") || "title";
+  const orderBy = searchParams.get("orderBy") || "createdAt";
+  const orderDir = searchParams.get("orderDir") || "desc";
 
-  // Mapeamento manual de colunas permitidas
+  // Colunas permitidas para ordenação
   const orderColumns = {
     title: note.title,
     createdAt: note.createdAt,
     updatedAt: note.updatedAt,
   };
 
-  // Valida se a coluna enviada é válida
   const orderField =
-    orderColumns[orderBy as keyof typeof orderColumns] || note.title;
+    orderColumns[orderBy as keyof typeof orderColumns] || note.createdAt;
 
   const offset = (page - 1) * limit;
 
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
       .select()
       .from(note)
       .where(ilike(note.title, `%${search}%`))
-      .orderBy(desc(note.createdAt))
+      .orderBy(orderDir === "asc" ? asc(orderField) : desc(orderField))
       .limit(limit)
       .offset(offset);
 
@@ -43,11 +44,9 @@ export async function GET(req: NextRequest) {
         .where(ilike(note.title, `%${search}%`))
     ).length;
 
-    //return NextResponse.json(allNotes);
-
     return NextResponse.json({
       data: notes,
-      total: total,
+      total,
       page,
       limit,
     });
@@ -72,6 +71,13 @@ export async function POST(req: NextRequest) {
 
     const { title, content } = await req.json();
 
+    if (!title || !content) {
+      return NextResponse.json(
+        { error: "Título e conteúdo são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
     await db.insert(note).values({
       title,
       content,
@@ -88,12 +94,11 @@ export async function POST(req: NextRequest) {
 // PUT /api/note
 export async function PUT(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { id, title, content, userId } = body;
+    const { id, title, content, userId } = await req.json();
 
-    if (!id) {
+    if (!id || !title || !content || !userId) {
       return NextResponse.json(
-        { error: "ID da nota é obrigatório" },
+        { error: "Campos obrigatórios ausentes" },
         { status: 400 }
       );
     }

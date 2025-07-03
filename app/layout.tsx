@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Oxanium } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ActiveThemeProvider } from "@/components/active-theme";
@@ -10,9 +10,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import Loading from "@/components/loading/loading";
 
-// Carrega a fonte Oxanium
-const oxanium = Oxanium({
-  variable: "--font-oxanium",
+// Carrega a fonte Outfit
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
 });
@@ -32,17 +32,17 @@ export default async function RootLayout({
   const isScaled = activeThemeValue?.endsWith("-scaled");
 
   return (
-    <html lang="en" suppressHydrationWarning className={oxanium.variable}>
+    <html lang="en" suppressHydrationWarning className={outfit.variable}>
       <body
         className={cn(
-          "bg-background overscroll-none font-[var(--font-oxanium)] antialiased",
+          "bg-background overscroll-none font-[var(--font-outfit)] antialiased",
           activeThemeValue ? `theme-${activeThemeValue}` : "",
           isScaled ? "theme-scaled" : ""
         )}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="outfit"
           enableSystem
           disableTransitionOnChange
           enableColorScheme

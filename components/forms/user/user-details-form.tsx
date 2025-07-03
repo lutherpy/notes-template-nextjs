@@ -53,20 +53,20 @@ export function UserDetailsForm() {
   const isSubmitting = form.formState.isSubmitting;
 
   // ✅ Usa o hook customizado
-  const { departments, loading } = useDepartments();
+  const { departments, isLoading } = useDepartments();
 
   const onSubmit = async (values: FormData) => {
     try {
       await createUserDetails(values);
       toast.success("Detalhes salvos com sucesso!");
       router.push("/dashboard");
-   } catch (error: unknown) {
-  if (error instanceof Error) {
-    toast.error(error.message);
-  } else {
-    toast.error("Erro ao salvar detalhes.");
-  }
-}
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao salvar detalhes.");
+      }
+    }
   };
 
   return (
@@ -137,39 +137,43 @@ export function UserDetailsForm() {
 
         {/* Departamento */}
         <FormField
-  control={form.control}
-  name="departmentId"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Departamento</FormLabel>
-      <FormControl>
-        {loading ? (
-          <Skeleton className="h-10 w-full rounded-md" />
-        ) : (
-          <Select
-            onValueChange={field.onChange}
-            defaultValue={field.value}
-            disabled={isSubmitting}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecione um departamento" />
-            </SelectTrigger>
-            <SelectContent>
-              {departments.map((dept) => (
-                <SelectItem key={dept.id} value={dept.id}>
-                  {dept.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+          control={form.control}
+          name="departmentId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Departamento</FormLabel>
+              <FormControl>
+                {isLoading ? (
+                  <Skeleton className="h-10 w-full rounded-md" />
+                ) : (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um departamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((dept: { id: string; name: string }) => (
+                        <SelectItem key={dept.id} value={dept.id}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <Button type="submit" className="w-full" disabled={isSubmitting || loading}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting || isLoading}
+        >
           {isSubmitting ? "Salvando..." : "Salvar Detalhes"}
         </Button>
       </form>

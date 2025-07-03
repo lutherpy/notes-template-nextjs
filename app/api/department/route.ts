@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { department } from "@/db/schema";
-import { desc, asc, eq, ilike, like } from "drizzle-orm";
-
+import { desc, asc, eq, ilike } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
