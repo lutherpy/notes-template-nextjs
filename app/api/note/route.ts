@@ -3,64 +3,15 @@ import { note } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { desc, asc, eq, ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { getListHandler } from "@/lib/handlers/getListHandler";
 
 // GET /api/note
-
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "10", 10);
-  const search = searchParams.get("search")?.trim() || "";
-  const orderBy = searchParams.get("orderBy") || "createdAt";
-  const orderDir = searchParams.get("orderDir") || "desc";
-
-  const orderColumns = {
-    title: note.title,
-    createdAt: note.createdAt,
-    updatedAt: note.updatedAt,
-  };
-
-  const orderField =
-    orderColumns[orderBy as keyof typeof orderColumns] || note.createdAt;
-
-  const offset = (page - 1) * limit;
-
-  // Pesquisa segura convertendo todos os campos para texto
-  const conditions = Object.values(note).map((field) =>
-    ilike(sql`${field}::text`, `%${search}%`)
-  );
-
-  try {
-    const notes = await db
-      .select()
-      .from(note)
-      .where(or(...conditions))
-      .orderBy(orderDir === "asc" ? asc(orderField) : desc(orderField))
-      .limit(limit)
-      .offset(offset);
-
-    const total = (
-      await db
-        .select()
-        .from(note)
-        .where(or(...conditions))
-    ).length;
-
-    return NextResponse.json({
-      data: notes,
-      total,
-      page,
-      limit,
-    });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Erro ao buscar notas" },
-      { status: 500 }
-    );
-  }
-}
+// ✅ Handler GET reutilizável
+export const GET = getListHandler(note, {
+  title: note.title,
+  createdAt: note.createdAt,
+  updatedAt: note.updatedAt,
+});
 
 // POST /api/note
 export async function POST(req: NextRequest) {
