@@ -1,7 +1,7 @@
 import { db } from "@/db/drizzle";
 import { note } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { desc, asc, eq, ilike, or, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { getListHandler } from "@/lib/handlers/getListHandler";
 

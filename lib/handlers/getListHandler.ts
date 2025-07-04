@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { ilike, or, sql, asc, desc } from "drizzle-orm";
+import { ilike, or, sql, asc, desc, SQL, Column } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import type { PgTable } from "drizzle-orm/pg-core";
 
@@ -9,10 +9,9 @@ import type { PgTable } from "drizzle-orm/pg-core";
  * @param table Tabela do Drizzle (ex: note)
  * @param allowedOrderFields Campos permitidos para ordenação (chave: string, valor: coluna)
  */
-
 export function getListHandler(
-  table: PgTable<any>,
-  allowedOrderFields: Record<string, any>
+  table: PgTable,
+  allowedOrderFields: Record<string, Column | SQL>
 ) {
   return async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -24,8 +23,7 @@ export function getListHandler(
     const orderDir = searchParams.get("orderDir") || "desc";
 
     const orderField =
-      allowedOrderFields[orderBy as keyof typeof allowedOrderFields] ??
-      Object.values(allowedOrderFields)[0];
+      allowedOrderFields[orderBy] ?? Object.values(allowedOrderFields)[0];
 
     const offset = (page - 1) * limit;
 
@@ -33,21 +31,22 @@ export function getListHandler(
       ilike(sql`${field}::text`, `%${search}%`)
     );
 
+    const whereClause = or(...searchConditions);
+
     try {
       const items = await db
         .select()
         .from(table)
-        .where(or(...searchConditions))
+        .where(whereClause)
         .orderBy(orderDir === "asc" ? asc(orderField) : desc(orderField))
         .limit(limit)
         .offset(offset);
 
-      const total = (
-        await db
-          .select()
-          .from(table)
-          .where(or(...searchConditions))
-      ).length;
+      const total = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(table)
+        .where(whereClause)
+        .then((rows) => Number(rows[0].count));
 
       return NextResponse.json({
         data: items,
