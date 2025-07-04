@@ -1,10 +1,11 @@
 import { db } from "@/db/drizzle";
 import { note } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { desc, asc, eq, ilike } from "drizzle-orm";
+import { desc, asc, eq, ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/note
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
@@ -14,7 +15,6 @@ export async function GET(req: NextRequest) {
   const orderBy = searchParams.get("orderBy") || "createdAt";
   const orderDir = searchParams.get("orderDir") || "desc";
 
-  // Colunas permitidas para ordenação
   const orderColumns = {
     title: note.title,
     createdAt: note.createdAt,
@@ -26,22 +26,25 @@ export async function GET(req: NextRequest) {
 
   const offset = (page - 1) * limit;
 
+  // Pesquisa segura convertendo todos os campos para texto
+  const conditions = Object.values(note).map((field) =>
+    ilike(sql`${field}::text`, `%${search}%`)
+  );
+
   try {
-    const query = db
+    const notes = await db
       .select()
       .from(note)
-      .where(ilike(note.title, `%${search}%`))
+      .where(or(...conditions))
       .orderBy(orderDir === "asc" ? asc(orderField) : desc(orderField))
       .limit(limit)
       .offset(offset);
-
-    const notes = await query;
 
     const total = (
       await db
         .select()
         .from(note)
-        .where(ilike(note.title, `%${search}%`))
+        .where(or(...conditions))
     ).length;
 
     return NextResponse.json({
