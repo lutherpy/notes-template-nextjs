@@ -4,7 +4,7 @@ import { DataTableServer } from "@/components/data-table-server";
 export default function Home() {
   return (
     <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Notas</h1>
+      <h1 className="text-2xl font-bold">Users</h1>
       <div className="flex justify-start"></div>
       <DataTableServer
         endpoint="/api/user"
