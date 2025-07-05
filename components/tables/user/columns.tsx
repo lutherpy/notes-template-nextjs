@@ -25,4 +25,12 @@ export const columns: ColumnDef<User>[] = [
       return value ? new Date(value).toLocaleString() : "—";
     },
   },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+    cell: ({ row }) => {
+      const value = row.original.createdAt;
+      return value ? new Date(value).toLocaleString() : "—";
+    },
+  },
 ];

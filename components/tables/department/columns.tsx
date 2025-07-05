@@ -31,6 +31,22 @@ export const columns: ColumnDef<Department>[] = [
     accessorKey: "description",
     header: "Description",
   },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      const value = row.original.createdAt;
+      return value ? new Date(value).toLocaleString() : "—";
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+    cell: ({ row }) => {
+      const value = row.original.createdAt;
+      return value ? new Date(value).toLocaleString() : "—";
+    },
+  },
 
   {
     id: "actions",
