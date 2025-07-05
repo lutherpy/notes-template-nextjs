@@ -33,6 +33,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning className={outfit.variable}>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body
         className={cn(
           "bg-background overscroll-none font-[var(--font-outfit)] antialiased",

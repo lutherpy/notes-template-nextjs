@@ -49,10 +49,25 @@ export function DataTableServer<TData, TValue>({
     `${endpoint}?page=${page}&limit=${limit}&search=${encodeURIComponent(
       search
     )}&orderBy=${orderBy}&orderDir=${orderDir}`,
+
     async (url: string | URL | Request) => {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Erro ao buscar dados");
       return res.json();
+    },
+
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 10000,
+      refreshInterval: 10000,
+
+      // ⬇️ loga quando dados são atualizados
+      onSuccess: (data, key) => {
+        console.log(
+          `[SWR] Atualizado em ${new Date().toLocaleTimeString()} para chave:`,
+          key
+        );
+      },
     }
   );
 
