@@ -9,7 +9,12 @@ export default function Home() {
       <div className="flex justify-start">
         <NoteDialog />
       </div>
-      <DataTableServer endpoint="/api/note" columns={columns} />
+      <DataTableServer
+        endpoint="/api/note"
+        columns={columns}
+        titleColumn="title"
+        titleLabel="Nome"
+      />
     </main>
   );
 }

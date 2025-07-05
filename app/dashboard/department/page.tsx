@@ -7,11 +7,16 @@ import DepartmentDialog from "@/components/forms/department/department-form-dial
 export default function Home() {
   return (
     <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Notas</h1>
+      <h1 className="text-2xl font-bold">Departamentos</h1>
       <div className="flex justify-start">
         <DepartmentDialog />
       </div>
-      <DataTableServer endpoint="/api/department" columns={columns} />
+      <DataTableServer
+        endpoint="/api/department"
+        columns={columns}
+        titleColumn="title"
+        titleLabel="Nome"
+      />
     </main>
   );
 }

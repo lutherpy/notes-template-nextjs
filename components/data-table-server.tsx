@@ -32,11 +32,15 @@ import { X } from "lucide-react";
 interface DataTableServerProps<TData, TValue> {
   endpoint: string;
   columns: ColumnDef<TData, TValue>[];
+  titleColumn: string;
+  titleLabel: string;
 }
 
 export function DataTableServer<TData, TValue>({
   endpoint,
   columns,
+  titleColumn,
+  titleLabel,
 }: DataTableServerProps<TData, TValue>) {
   const [inputSearch, setInputSearch] = useState("");
   const [search, setSearch] = useState("");
@@ -49,25 +53,16 @@ export function DataTableServer<TData, TValue>({
     `${endpoint}?page=${page}&limit=${limit}&search=${encodeURIComponent(
       search
     )}&orderBy=${orderBy}&orderDir=${orderDir}`,
-
     async (url: string | URL | Request) => {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Erro ao buscar dados");
       return res.json();
     },
-
     {
-      revalidateOnFocus: false, // ❌ Desativa revalidação ao focar na aba
-      dedupingInterval: 20000, // ⬅️ evita requisições duplicadas em 20 segundos
-      refreshInterval: 10000, // ❌ Desativa revalidação automática
-      focusThrottleInterval: 5000, // ⬅️ evita revalidação excessiva ao focar na aba
-      // revalidateOnFocus: false, // Não revalidar ao focar na aba
-      // dedupingInterval: 10000, // ⬅️ evita requisições duplicadas em 10 segundos
-      // refreshInterval: 10000, // ⬅️ atualiza a cada 10 segundos
-      // focusThrottleInterval: 5000, // ⬅️ evita revalidação excessiva ao focar na aba
-      // loadingTimeout: 10000, // ⬅️ tempo limite de 10 segundos para requisições lentas
-
-      // ⬇️ loga quando a requisição é feita
+      revalidateOnFocus: false,
+      dedupingInterval: 20000,
+      refreshInterval: 10000,
+      focusThrottleInterval: 5000,
       onLoadingSlow: (key) => {
         console.log(
           `[SWR] Requisição lenta para chave:`,
@@ -75,12 +70,9 @@ export function DataTableServer<TData, TValue>({
           `- Tempo limite: 10 segundos`
         );
       },
-      // ⬇️ loga quando a requisição falha
       onError: (error, key) => {
         console.error(`[SWR] Erro ao buscar dados para chave:`, key, error);
       },
-
-      // ⬇️ loga quando dados são atualizados
       onSuccess: (data, key) => {
         console.log(
           `[SWR] Atualizado em ${new Date().toLocaleTimeString()} para chave:`,
@@ -107,6 +99,13 @@ export function DataTableServer<TData, TValue>({
     setInputSearch("");
     setSearch("");
     setPage(1);
+  };
+
+  const getOrderLabel = (value: string) => {
+    if (value === titleColumn) return titleLabel;
+    if (value === "createdAt") return "Data de Criação";
+    if (value === "updatedAt") return "Última Atualização";
+    return value;
   };
 
   if (isLoading) {
@@ -161,20 +160,18 @@ export function DataTableServer<TData, TValue>({
           <Select value={orderBy} onValueChange={setOrderBy}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Ordenar por">
-                {orderBy === "title"
-                  ? "Título"
-                  : orderBy === "createdAt"
-                  ? "Data de Criação"
-                  : "Última Atualização"}
+                {getOrderLabel(orderBy)}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="title">Título</SelectItem>
+              <SelectItem value={titleColumn}>{titleLabel}</SelectItem>
               <SelectItem value="createdAt">Data de Criação</SelectItem>
               <SelectItem value="updatedAt">Última Atualização</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {/* Ordem */}
         <div className="w-48">
           <label className="text-sm font-medium block mb-1">Ordem</label>
           <Select

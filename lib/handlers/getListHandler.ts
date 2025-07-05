@@ -22,8 +22,14 @@ export function getListHandler(
     const orderBy = searchParams.get("orderBy") || "updatedAt";
     const orderDir = searchParams.get("orderDir") || "desc";
 
-    const orderField =
+    const orderFieldRaw =
       allowedOrderFields[orderBy] ?? Object.values(allowedOrderFields)[0];
+
+    // 🔽 Torna o order by case-insensitive (LOWER(coluna)) se possível
+    const orderField =
+      "name" in orderFieldRaw
+        ? sql`LOWER(${orderFieldRaw}::text)` // aplica cast explícito para texto
+        : orderFieldRaw;
 
     const offset = (page - 1) * limit;
 

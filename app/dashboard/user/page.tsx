@@ -6,7 +6,12 @@ export default function Home() {
     <main className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Notas</h1>
       <div className="flex justify-start"></div>
-      <DataTableServer endpoint="/api/user" columns={columns} />
+      <DataTableServer
+        endpoint="/api/user"
+        columns={columns}
+        titleColumn="name"
+        titleLabel="Nome"
+      />
     </main>
   );
 }
