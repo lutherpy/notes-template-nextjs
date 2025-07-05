@@ -57,9 +57,16 @@ export function DataTableServer<TData, TValue>({
     },
 
     {
-      revalidateOnFocus: false, // Não revalidar ao focar na aba
-      dedupingInterval: 10000, // ⬅️ evita requisições duplicadas em 10 segundos
-      refreshInterval: 10000, // ⬅️ atualiza a cada 10 segundos
+      revalidateOnFocus: false, // ❌ Desativa revalidação ao focar na aba
+      dedupingInterval: 20000, // ⬅️ evita requisições duplicadas em 20 segundos
+      refreshInterval: 0, // ❌ Desativa revalidação automática
+      focusThrottleInterval: 5000, // ⬅️ evita revalidação excessiva ao focar na aba
+      // revalidateOnFocus: false, // Não revalidar ao focar na aba
+      // dedupingInterval: 10000, // ⬅️ evita requisições duplicadas em 10 segundos
+      // refreshInterval: 10000, // ⬅️ atualiza a cada 10 segundos
+      // focusThrottleInterval: 5000, // ⬅️ evita revalidação excessiva ao focar na aba
+      // loadingTimeout: 10000, // ⬅️ tempo limite de 10 segundos para requisições lentas
+
       // ⬇️ loga quando a requisição é feita
       onLoadingSlow: (key) => {
         console.log(

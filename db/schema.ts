@@ -1,6 +1,11 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-
-
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 // Tabela de detalhes do usuário
 export const userDetails = pgTable("user_details", {
@@ -11,22 +16,31 @@ export const userDetails = pgTable("user_details", {
   identificationNumber: text("identification_number").notNull(),
   country: text("country").notNull(),
   province: text("province").notNull(),
-  departmentId: uuid("department_id")
-    .references(() => department.id, { onDelete: "set null" }), // ou "cascade"
+  departmentId: uuid("department_id").references(() => department.id, {
+    onDelete: "set null",
+  }), // ou "cascade"
 });
 
-
-export const department = pgTable("department", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull().unique(),
-  description: text("description"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
+export const department = pgTable(
+  "department",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull().unique(),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (department) => ({
+    nameIdx: index("department_name_idx").on(department.name),
+    updatedAtIdx: index("department_updated_at_idx").on(department.updatedAt),
+    // Se quiser ordenar por data de criação também:
+    // createdAtIdx: index("department_created_at_idx").on(department.createdAt),
+  })
+);
 
 // Tabela User
 export const user = pgTable("user", {
@@ -97,16 +111,22 @@ export const verification = pgTable("verification", {
 });
 
 // Tabela Note
-export const note = pgTable("note", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
-});
+export const note = pgTable(
+  "note",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title"),
+    content: text("content"),
+    updatedAt: timestamp("updated_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow(),
+    userId: uuid("user_id"),
+  },
+  (note) => ({
+    // Índices recomendados:
+    titleIdx: index("title_idx").on(note.title),
+    updatedAtIdx: index("updated_at_idx").on(note.updatedAt),
+  })
+);
 
 export type Note = typeof note.$inferSelect;
 export type Department = typeof department.$inferSelect;

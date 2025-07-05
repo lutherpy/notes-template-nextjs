@@ -54,7 +54,7 @@ export default function NoteForm({
 
     try {
       if (note) {
-        await updateNote({ ...values, id: note.id, userId: note.userId });
+        await updateNote({ ...values, id: note.id, userId: note.userId ?? "" });
       } else {
         await createNote(values);
       }

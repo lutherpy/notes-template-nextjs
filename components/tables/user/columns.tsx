@@ -5,17 +5,17 @@ import { User } from "@/db/schema";
 
 export const columns: ColumnDef<User>[] = [
   {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
     accessorKey: "name",
     header: "Name",
   },
-  {
-    accessorKey: "email",
-    header: "E-mail",
-  },
 
   {
-    accessorKey: "id",
-    header: "User ID",
+    accessorKey: "email",
+    header: "Email",
   },
   {
     accessorKey: "createdAt",
