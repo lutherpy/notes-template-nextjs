@@ -1,7 +1,5 @@
-import { db } from "@/db/drizzle";
 import { user } from "@/db/schema"; // importa o schema da tabela user
 import { getListHandler } from "@/lib/handlers/getListHandler";
-import { NextResponse } from "next/server";
 
 // GET /api/user
 export const GET = getListHandler(user, {
