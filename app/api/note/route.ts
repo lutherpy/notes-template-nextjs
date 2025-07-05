@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
 }
 
 // PUT /api/note
+
 export async function PUT(req: NextRequest) {
   try {
     const { id, title, content, userId } = await req.json();
@@ -59,7 +60,12 @@ export async function PUT(req: NextRequest) {
 
     await db
       .update(note)
-      .set({ title, content, userId })
+      .set({
+        title,
+        content,
+        userId,
+        updatedAt: new Date(), // ✅ atualiza a data da última modificação
+      })
       .where(eq(note.id, id));
 
     return NextResponse.json({ success: true });

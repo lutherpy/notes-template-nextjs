@@ -21,6 +21,7 @@ import {
 import DeleteNoteButton from "@/components/delete-button/note/delete-note-button";
 import NoteForm from "@/components/forms/note/note-form";
 import { Note } from "@/db/schema";
+import { formatDate } from "@/lib/utils";
 
 export const columns: ColumnDef<Note>[] = [
   {
@@ -39,10 +40,12 @@ export const columns: ColumnDef<Note>[] = [
   {
     accessorKey: "createdAt",
     header: "Created At",
-    cell: ({ row }) => {
-      const value = row.original.createdAt;
-      return value ? new Date(value).toLocaleString() : "—";
-    },
+    cell: ({ row }) => formatDate(row.original.createdAt),
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+    cell: ({ row }) => formatDate(row.original.updatedAt),
   },
 
   {

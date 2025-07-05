@@ -42,13 +42,14 @@ export function DataTableServer<TData, TValue>({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [orderBy, setOrderBy] = useState("title");
+  const [orderBy, setOrderBy] = useState("updatedAt");
+  const [orderDir, setOrderDir] = useState<"asc" | "desc">("desc");
 
   const { data, error, isLoading } = useSWR(
     `${endpoint}?page=${page}&limit=${limit}&search=${encodeURIComponent(
       search
-    )}&orderBy=${orderBy}`,
-    async (url) => {
+    )}&orderBy=${orderBy}&orderDir=${orderDir}`,
+    async (url: string | URL | Request) => {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Erro ao buscar dados");
       return res.json();
@@ -140,6 +141,23 @@ export function DataTableServer<TData, TValue>({
             </SelectContent>
           </Select>
         </div>
+        <div className="w-48">
+          <label className="text-sm font-medium block mb-1">Ordem</label>
+          <Select
+            value={orderDir}
+            onValueChange={(value) => setOrderDir(value as "asc" | "desc")}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Direção">
+                {orderDir === "asc" ? "Ascendente" : "Descendente"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="asc">Ascendente</SelectItem>
+              <SelectItem value="desc">Descendente</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Itens por página */}
         <div className="w-48">
@@ -178,19 +196,41 @@ export function DataTableServer<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                {headerGroup.headers.map((header) => {
+                  const accessor = header.column.id as string | undefined;
+                  const isSorted = accessor === orderBy;
+                  const isAsc = isSorted && orderDir === "asc";
+
+                  return (
+                    <TableHead
+                      key={header.id}
+                      onClick={() => {
+                        if (!accessor) return;
+                        if (orderBy === accessor) {
+                          setOrderDir(orderDir === "asc" ? "desc" : "asc");
+                        } else {
+                          setOrderBy(accessor);
+                          setOrderDir("asc");
+                        }
+                      }}
+                      className={`cursor-pointer select-none ${
+                        isSorted ? "text-primary" : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-1">
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                  </TableHead>
-                ))}
+                        {isSorted && (isAsc ? " ▲" : " ▼")}
+                      </div>
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (

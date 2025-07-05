@@ -41,7 +41,10 @@ export async function updateNote(note: {
   const res = await fetch(`${BASE_URL}/api/note`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(note),
+    body: JSON.stringify({
+      ...note,
+      updatedAt: new Date().toISOString(), // ✅ adiciona timestamp atualizado
+    }),
   });
 
   if (!res.ok) {

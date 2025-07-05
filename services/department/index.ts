@@ -45,7 +45,10 @@ export async function updateDepartment(dept: {
   const res = await fetch(`${BASE_URL}/api/department`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dept),
+    body: JSON.stringify({
+      ...dept,
+      updatedAt: new Date().toISOString(), // ✅ Adiciona timestamp atualizado
+    }),
   });
 
   if (!res.ok) {
