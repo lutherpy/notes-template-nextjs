@@ -23,7 +23,7 @@ export default function NoteDialog() {
         <DialogHeader>
           <DialogTitle>Add Note</DialogTitle>
           <DialogDescription>Add a new note to the database.</DialogDescription>
-          return <NoteForm />
+          <NoteForm />
         </DialogHeader>
       </DialogContent>
     </Dialog>

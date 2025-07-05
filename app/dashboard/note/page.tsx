@@ -1,5 +1,3 @@
-"use client";
-
 import { columns } from "@/components/tables/note/columns";
 import { DataTableServer } from "@/components/data-table-server";
 import NoteDialog from "@/components/forms/note/note-form-dialog";
