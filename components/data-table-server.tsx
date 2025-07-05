@@ -57,9 +57,21 @@ export function DataTableServer<TData, TValue>({
     },
 
     {
-      revalidateOnFocus: false,
-      dedupingInterval: 10000,
-      refreshInterval: 10000,
+      revalidateOnFocus: false, // Não revalidar ao focar na aba
+      dedupingInterval: 10000, // ⬅️ evita requisições duplicadas em 10 segundos
+      refreshInterval: 10000, // ⬅️ atualiza a cada 10 segundos
+      // ⬇️ loga quando a requisição é feita
+      onLoadingSlow: (key) => {
+        console.log(
+          `[SWR] Requisição lenta para chave:`,
+          key,
+          `- Tempo limite: 10 segundos`
+        );
+      },
+      // ⬇️ loga quando a requisição falha
+      onError: (error, key) => {
+        console.error(`[SWR] Erro ao buscar dados para chave:`, key, error);
+      },
 
       // ⬇️ loga quando dados são atualizados
       onSuccess: (data, key) => {
